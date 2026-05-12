@@ -1,0 +1,251 @@
+#include "FunctionImplementation.h"
+
+using ino_interpreter::structs::FunctionImplementation;
+using ino_interpreter::structs::FunctionCall;
+
+const FunctionImplementation::return_t FunctionImplementation::IMPLEMENTATION_NOT_FOUND = -999404;
+const FunctionImplementation::return_t FunctionImplementation::ARGCOUNT_MISMATCH = -999003;
+const FunctionImplementation::return_t FunctionImplementation::ARGCOUNT_UNSUPPORTED = -999004;
+
+FunctionImplementation::FunctionImplementation(const size_t argCount) :
+    func(nullptr), argCount(argCount)
+{
+    //
+}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)()) : func((void *)f), argCount(0) {}
+FunctionImplementation::FunctionImplementation(return_t (*f)(Argument)) : func((void *)f), argCount(1) {}
+FunctionImplementation::FunctionImplementation(return_t (*f)(Argument, Argument)) : func((void *)f), argCount(2) {}
+FunctionImplementation::FunctionImplementation(return_t (*f)(Argument, Argument, Argument)) : func((void *)f), argCount(3) {}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)(
+    Argument,
+    Argument,
+    Argument,
+    Argument
+)) : func((void *)f), argCount(4) {}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)(
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument
+)) : func((void *)f), argCount(5) {}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)(
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument
+)) : func((void *)f), argCount(6) {}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)(
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument
+)) : func((void *)f), argCount(7) {}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)(
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument
+)) : func((void *)f), argCount(8) {}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)(
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument
+)) : func((void *)f), argCount(9) {}
+
+FunctionImplementation::FunctionImplementation(return_t (*f)(
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument,
+    Argument
+)) : func((void *)f), argCount(10) {}
+
+FunctionImplementation::FunctionImplementation(const FunctionImplementation &ref) :
+    func(ref.func),
+    argCount(ref.argCount)
+{
+    //
+}
+
+size_t FunctionImplementation::getArgCount() const {
+    return argCount;
+}
+
+FunctionImplementation::return_t FunctionImplementation::execute(const FunctionCall &call) const {
+    if (func == nullptr) {
+        return IMPLEMENTATION_NOT_FOUND;
+    }
+    if (argCount != call.getArgCount()) {
+        return ARGCOUNT_MISMATCH;
+    }
+    switch (argCount) {
+        case 0:
+            return ((return_t (*)())func)();
+        case 1:
+            return ((return_t (*)(Argument))func)(*(call.getArg(0)));
+        case 2:
+            return ((return_t (*)(Argument, Argument))func)(*(call.getArg(0)), *(call.getArg(1)));
+        case 3:
+            return ((return_t (*)(Argument, Argument, Argument))func)(*(call.getArg(0)), *(call.getArg(1)), *(call.getArg(2)));
+        case 4:
+            return ((return_t (*)(
+                Argument,
+                Argument,
+                Argument,
+                Argument
+            ))func)(
+                *(call.getArg(0)),
+                *(call.getArg(1)),
+                *(call.getArg(2)),
+                *(call.getArg(3))
+            );
+        case 5:
+            return ((return_t (*)(
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument
+            ))func)(
+                *(call.getArg(0)),
+                *(call.getArg(1)),
+                *(call.getArg(2)),
+                *(call.getArg(3)),
+                *(call.getArg(4))
+            );
+        case 6:
+            return ((return_t (*)(
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument
+            ))func)(
+                *(call.getArg(0)),
+                *(call.getArg(1)),
+                *(call.getArg(2)),
+                *(call.getArg(3)),
+                *(call.getArg(4)),
+                *(call.getArg(5))
+            );
+        case 7:
+            return ((return_t (*)(
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument
+            ))func)(
+                *(call.getArg(0)),
+                *(call.getArg(1)),
+                *(call.getArg(2)),
+                *(call.getArg(3)),
+                *(call.getArg(4)),
+                *(call.getArg(5)),
+                *(call.getArg(6))
+            );
+        case 8:
+            return ((return_t (*)(
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument
+            ))func)(
+                *(call.getArg(0)),
+                *(call.getArg(1)),
+                *(call.getArg(2)),
+                *(call.getArg(3)),
+                *(call.getArg(4)),
+                *(call.getArg(5)),
+                *(call.getArg(6)),
+                *(call.getArg(7))
+            );
+        case 9:
+            return ((return_t (*)(
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument
+            ))func)(
+                *(call.getArg(0)),
+                *(call.getArg(1)),
+                *(call.getArg(2)),
+                *(call.getArg(3)),
+                *(call.getArg(4)),
+                *(call.getArg(5)),
+                *(call.getArg(6)),
+                *(call.getArg(7)),
+                *(call.getArg(8))
+            );
+        case 10:
+            return ((return_t (*)(
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument,
+                Argument
+            ))func)(
+                *(call.getArg(0)),
+                *(call.getArg(1)),
+                *(call.getArg(2)),
+                *(call.getArg(3)),
+                *(call.getArg(4)),
+                *(call.getArg(5)),
+                *(call.getArg(6)),
+                *(call.getArg(7)),
+                *(call.getArg(8)),
+                *(call.getArg(9))
+            );
+        default:
+            return ARGCOUNT_UNSUPPORTED;
+    }
+}
+
+bool FunctionImplementation::operator==(const FunctionImplementation &impl) const {
+    return argCount == impl.argCount && func == impl.func;
+}
