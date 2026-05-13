@@ -32,3 +32,12 @@ pinMode(2, 1); pinMode(3, 0);
 digitalWrite(2, 1); digitalWrite(2, 0); pulseIn(3, 1);
 ```
 which would give you the period of pin 3 is HIGH.
+
+## License
+
+This library is licensed under [BSD 3-Clause License](LICENSE.txt),
+covering all the source code in this library, but not the Arduino API.
+
+Note that the Arduino API might be released under a different license.
+The copyright and licensing conditions of Arduino API
+belong to Arduino and their respective copyright holders.
