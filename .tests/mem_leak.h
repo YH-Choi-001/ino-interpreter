@@ -1,5 +1,5 @@
 /**
- * @file mem_leak.h The plug-in for detecting memory leaks in test cases.
+ * @file mem_leak.h Memory leak detection for GoogleTest test cases.
  * 
  * @copyright Copyright (c) 2026 YH Choi. All rights reserved.
  * 
@@ -26,125 +26,55 @@
  * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
- * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef MEM_LEAK_H
 #define MEM_LEAK_H
 
 #include <cstddef>
-#include <cstdlib>
 
+#include <gtest/gtest.h>
+
+/**
+ * Debug levels (set with -DMEM_LEAK_DEBUG_LEVEL=n when compiling mem_leak.cpp):
+ *   0 - leak detection disabled
+ *   1 - count outstanding allocations (default)
+ *   2 - count outstanding allocations and trace every new/delete to stdout
+ */
 #ifndef MEM_LEAK_DEBUG_LEVEL
 #define MEM_LEAK_DEBUG_LEVEL 1
 #endif
 
 namespace tests {
     namespace mem_leak {
-        static size_t malloc_count = 0;
+        /**
+         * @return the number of `new` allocations not yet matched by a `delete`,
+         * counted since the start of the program.
+         */
+        long get_outstanding_allocation_count();
 
-        void reset_malloc_count();
-
-        size_t get_malloc_count();
-
-        bool has_memory_leaked();
+        /**
+         * A GoogleTest fixture that fails a test if the test body
+         * allocates with `new` more times than it frees with `delete`.
+         */
+        class MemoryLeakCheckedTest : public ::testing::Test {
+            private:
+                long baseline;
+            protected:
+                void SetUp() override {
+                    baseline = get_outstanding_allocation_count();
+                }
+                void TearDown() override {
+                    // GoogleTest itself allocates to record failures,
+                    // so the count is only meaningful for an otherwise passing test.
+                    if (HasFailure()) {
+                        return;
+                    }
+                    const long leaked = get_outstanding_allocation_count() - baseline;
+                    EXPECT_EQ(leaked, 0) << "Memory leak! You forgot " << leaked << " delete(s).";
+                }
+        };
     }
 }
-
-#if (MEM_LEAK_DEBUG_LEVEL == 0)
-// use the default implementation
-// void *operator new(const size_t size) {
-//     return malloc(size);
-// }
-// void *operator new[](const size_t size) {
-//     return malloc(size);
-// }
-// void operator delete(void *const ptr) {
-//     free(ptr);
-// }
-// void operator delete[](void *const ptr) {
-//     free(ptr);
-// }
-
-void tests::mem_leak::reset_malloc_count() {
-    //
-}
-
-size_t tests::mem_leak::get_malloc_count() {
-    return 0;
-}
-
-bool tests::mem_leak::has_memory_leaked() {
-    return false;
-}
-#elif (MEM_LEAK_DEBUG_LEVEL == 1)
-
-void *operator new(const size_t size) {
-    tests::mem_leak::malloc_count++;
-    return malloc(size);
-}
-void *operator new[](const size_t size) {
-    tests::mem_leak::malloc_count++;
-    return malloc(size);
-}
-void operator delete(void *const ptr) {
-    tests::mem_leak::malloc_count--;
-    free(ptr);
-}
-void operator delete[](void *const ptr) {
-    tests::mem_leak::malloc_count--;
-    free(ptr);
-}
-
-void tests::mem_leak::reset_malloc_count() {
-    tests::mem_leak::malloc_count = 0;
-}
-
-size_t tests::mem_leak::get_malloc_count() {
-    return tests::mem_leak::malloc_count;
-}
-
-bool tests::mem_leak::has_memory_leaked() {
-    return tests::mem_leak::malloc_count != 0;
-}
-#elif (MEM_LEAK_DEBUG_LEVEL == 2)
-#include <iostream>
-
-void *operator new(const size_t size) {
-    tests::mem_leak::malloc_count++;
-    void *const ptr = malloc(size);
-    std::cout << "new @ " << ptr << " (len = " << size << " )" << std::endl;
-    return ptr;
-}
-void *operator new[](const size_t size) {
-    tests::mem_leak::malloc_count++;
-    void *const ptr = malloc(size);
-    std::cout << "new @ " << ptr << " (len = " << size << " )" << std::endl;
-    return ptr;
-}
-void operator delete(void *const ptr) {
-    tests::mem_leak::malloc_count--;
-    std::cout << "del @ " << ptr << std::endl;
-    free(ptr);
-}
-void operator delete[](void *const ptr) {
-    tests::mem_leak::malloc_count--;
-    std::cout << "del @ " << ptr << std::endl;
-    free(ptr);
-}
-
-void tests::mem_leak::reset_malloc_count() {
-    tests::mem_leak::malloc_count = 0;
-    std::cout << "tests::mem_leak::malloc_count resetted" << std::endl;
-}
-
-size_t tests::mem_leak::get_malloc_count() {
-    return tests::mem_leak::malloc_count;
-}
-
-bool tests::mem_leak::has_memory_leaked() {
-    return tests::mem_leak::malloc_count != 0;
-}
-#endif
 
 #endif // #ifndef MEM_LEAK_H
