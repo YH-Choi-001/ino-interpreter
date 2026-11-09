@@ -126,6 +126,10 @@ FunctionImplementation::FunctionImplementation(const FunctionImplementation &ref
     //
 }
 
+FunctionImplementation::~FunctionImplementation() {
+    //
+}
+
 size_t FunctionImplementation::getArgCount() const {
     return argCount;
 }

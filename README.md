@@ -33,6 +33,26 @@ digitalWrite(2, 1); digitalWrite(2, 0); pulseIn(3, 1);
 ```
 which would give you the period of pin 3 is HIGH.
 
+## Testing
+
+Unit tests live in [`.tests/`](.tests) and use [GoogleTest](https://github.com/google/googletest).
+A C++17 compiler, CMake (3.16 or newer) and `make` are required; GoogleTest is fetched automatically on the first run.
+
+```sh
+git submodule update --init --recursive
+make -C .tests test    # build and run all tests
+make -C .tests test TEST_FILTER="SubstringTest\."   # run a subset
+make -C .tests clean   # remove build artefacts
+```
+
+Every test also checks that it frees everything it allocates with `new`.
+
+To run the tests automatically before each commit, install [pre-commit](https://pre-commit.com) and run:
+
+```sh
+pre-commit install
+```
+
 ## License
 
 This library is licensed under [BSD 3-Clause License](LICENSE.txt),

@@ -1,0 +1,11 @@
+# See https://pre-commit.com for more information.
+# Install the hooks with: pre-commit install
+repos:
+  - repo: local
+    hooks:
+      - id: unit-tests
+        name: unit tests (GoogleTest)
+        entry: make -C .tests test
+        language: system
+        pass_filenames: false
+        files: ^(src/|\.tests/)

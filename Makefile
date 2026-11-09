@@ -46,12 +46,14 @@ HEX_FILES := $(SKETCH_FILES:.ino=.ino.hex)
 BIN_W_BTLD_FILES := $(SKETCH_FILES:.ino=.ino.with_bootloader.bin)
 HEX_W_BTLD_FILES := $(SKETCH_FILES:.ino=.ino.with_bootloader.hex)
 
+.PHONY: all verify test
+
 all: $(ELF_FILES)
 
 verify: $(VERIFY_FILES)
 
 test:
-	cd .tests && make | grep -E "(Testing|All passed|failed)" && make clean
+	$(MAKE) -C .tests test
 
 %.ino.verify: %.ino
 	$(COMPILE_CMD) $<
