@@ -48,8 +48,11 @@ FunctionCall::factory_t FunctionCall::factory(Substring stringRep) {
 
     factory.argCount = argList.isEmpty() ? 0 : argList.count(ARG_SEPARATOR) + 1;
 
-    Substring argStrings [factory.argCount];
-    argList.split(ARG_SEPARATOR, argStrings);
+    // split() always writes at least one substring, so only call it when there is room for one.
+    Substring argStrings [factory.argCount > 0 ? factory.argCount : 1];
+    if (factory.argCount > 0) {
+        argList.split(ARG_SEPARATOR, argStrings);
+    }
 
     factory.args = new const Argument* [factory.argCount];
     for (size_t i = 0; i < factory.argCount; i++) {
