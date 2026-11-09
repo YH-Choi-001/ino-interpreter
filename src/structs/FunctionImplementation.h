@@ -206,6 +206,12 @@ class FunctionImplementation {
         FunctionImplementation(const FunctionImplementation &ref);
 
         /**
+         * @brief Destroy a function implementation.
+         * Virtual so that subclasses are destroyed correctly when deleted through a base pointer.
+         */
+        virtual ~FunctionImplementation();
+
+        /**
          * @brief Get the number of arguments in this function.
          * @return The number of arguements in this function.
          */
